@@ -2,7 +2,7 @@
 
 var Station = {
 	// Initialise la station
-	init: function (number, name, address, banking, bonus, status, position, bikeStand, availableBikeStand, availableStand) {
+	init: function (number, name, address, banking, bonus, status, position, bikeStand, availableBikeStand, availableBike) {
 		this.number = number;
   		this.name = name;
   		this.address = address;
@@ -12,7 +12,7 @@ var Station = {
   		this.position = position;
   		this.bikeStand =  bikeStand;
   		this.availableBikeStand = availableBikeStand;
-  		this.availableStand = availableStand;
+  		this.availableBike = availableBike;
 	}
 
 
@@ -50,17 +50,42 @@ function initMap() {
     center: {lat: 48.856578, lng: 2.351828},
     zoom: 12
   });
+
   var markers = [];
   for (var i = 0; i < stations.length; i++) {
     var station = stations[i];
-    var marker = new google.maps.Marker({
-      position: {lat: station.position[0], lng: station.position[1]},
-      map: map,
-      //icon: image,
-      //shape: shape,
-      title: station.name
-      //zIndex: beach[3]
-    });
+    if (station.status == 'CLOSED') {
+      var marker = new google.maps.Marker({
+        position: {lat: station.position[0], lng: station.position[1]},
+        map: map,
+        icon: 'images/closed.png',
+        title: station.name
+      });
+    }
+    else if(station.availableBike == 0) {
+      var marker = new google.maps.Marker({
+        position: {lat: station.position[0], lng: station.position[1]},
+        map: map,
+        icon: 'images/full.png',
+        title: station.name
+      });     
+    }
+    else if(station.availableBikeStand == 0) {
+      var marker = new google.maps.Marker({
+        position: {lat: station.position[0], lng: station.position[1]},
+        map: map,
+        icon: 'images/empty.png',
+        title: station.name
+      });     
+    }
+    else {
+      var marker = new google.maps.Marker({
+        position: {lat: station.position[0], lng: station.position[1]},
+        map: map,
+        icon: 'images/open.png',
+        title: station.name
+      });     
+    }
     markers.push(marker);
   }
   var markerCluster = new MarkerClusterer(map, markers,
