@@ -2,6 +2,7 @@
 // MAP
 
 var map;
+var infoBulle;
 
 function initMap() {
   var map = new google.maps.Map(document.getElementById('map'), {
@@ -32,13 +33,30 @@ var Station = {
   		this.bikeStand =  bikeStand;
   		this.availableBikeStand = availableBikeStand;
   		this.availableBike = availableBike;
+      this.contentInfoBulle = '<div id="'+this.number+'" class="infobulle '+this.status+'">'+
+      '<h1>'+this.name+'</h1>'+
+      '<div>'+this.address+'</div>'+
+      '<div>Vélos disponibles : '+this.availableBike+'</div>'+
+      '<div>Places disponibles : '+this.availableBikeStand+'</div>'+
+      '<div>Nombre de places totales : '+this.bikeStand+'</div>';
+      if (this.banking == 'True') {
+        this.contentInfoBulle += '<div>Borne de paiement : Oui</div>';
+      }
+      else {
+        this.contentInfoBulle += '<div>Borne de paiement : Non</div>';
+      }
+      if (this.bonus == 'True') {
+        this.contentInfoBulle += '<div>Bonus : Oui</div>';
+      }
+
 
       // créer le marker
       this.marker = new google.maps.Marker({
         position: {lat: this.position[0], lng: this.position[1]},
         map: map,
         icon: '',
-        title: this.name
+        title: this.name, 
+        content: this.contentInfoBulle
       });
 
       // choisir l'icon
@@ -54,6 +72,13 @@ var Station = {
       else {
         this.marker.icon = 'images/open.png';     
       }
+
+      //creer l'infobulle
+      this.infoBulle = new google.maps.InfoWindow({
+        content: this.contentInfoBulle
+      });
+
+
 	}
 
 };
@@ -64,6 +89,7 @@ var StationsObject =  {
 	init: function () {
     this.stationsArray = [];
     this.markers = [];
+    this.infoBulles = [];
 
 
     this.stationsArray = this.getStations();
@@ -82,6 +108,12 @@ var StationsObject =  {
           var station = data.records[i].fields;
           stationNew = Object.create(Station);
           stationNew.init(station.number, station.name, station.address, station.banking, station.bonus, station.status, station.position, station.bike_stands, station.available_bike_stands, station.available_bikes);
+          stationNew.marker.addListener('click', (function(marker, i) {
+                        return function() {
+                          stationNew.infoBulle.open(map, stationNew.marker);
+                        }
+                    })(station.marker, i));
+          console.log(stationNew.marker);
           array.push(stationNew);
         }
       }     
@@ -95,6 +127,8 @@ var StationsObject =  {
       this.markers.push(station.marker);
     }
   }
+
+  
 };
 
 
