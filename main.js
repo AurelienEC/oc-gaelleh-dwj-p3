@@ -1,7 +1,7 @@
-
 // MAP
 
 var map;
+var infoBulle;
 
 function initMap() {
   var map = new google.maps.Map(document.getElementById('map'), {
@@ -10,35 +10,49 @@ function initMap() {
 
   });
   var stations = Object.create(StationsObject);
-  stations.init();
+  stations.init(map);
 
-  var markerCluster = new MarkerClusterer(map, stations.markers,
-     {imagePath: 'images/m'});
-      
+
 }
 
 // OPEN DATA PARIS 
 
 var Station = {
-	// Initialise la station
-	init: function (number, name, address, banking, bonus, status, position, bikeStand, availableBikeStand, availableBike, marker) {
-		this.number = number;
-  		this.name = name;
-  		this.address = address;
-  		this.banking = banking;
-  		this.bonus = bonus;
-  		this.status = status;
-  		this.position = position;
-  		this.bikeStand =  bikeStand;
-  		this.availableBikeStand = availableBikeStand;
-  		this.availableBike = availableBike;
+  // Initialise la station
+  init: function (number, name, address, banking, bonus, status, position, bikeStand, availableBikeStand, availableBike, marker) {
+    this.number = number;
+      this.name = name;
+      this.address = address;
+      this.banking = banking;
+      this.bonus = bonus;
+      this.status = status;
+      this.position = position;
+      this.bikeStand =  bikeStand;
+      this.availableBikeStand = availableBikeStand;
+      this.availableBike = availableBike;
+      this.contentInfoBulle = '<div id="'+this.number+'" class="infobulle '+this.status+'">'+
+      '<h1>'+this.name+'</h1>'+
+      '<div>'+this.address+'</div>'+
+      '<div>V&eacute;los disponibles : '+this.availableBike+'</div>'+
+      '<div>Places disponibles : '+this.availableBikeStand+'</div>'+
+      '<div>Nombre de places totales : '+this.bikeStand+'</div>';
+      if (this.banking == 'True') {
+        this.contentInfoBulle += '<div>Borne de paiement : Oui</div>';
+      }
+      else {
+        this.contentInfoBulle += '<div>Borne de paiement : Non</div>';
+      }
+      if (this.bonus == 'True') {
+        this.contentInfoBulle += '<div>Bonus : Oui</div>';
+      }
 
       // créer le marker
       this.marker = new google.maps.Marker({
         position: {lat: this.position[0], lng: this.position[1]},
         map: map,
         icon: '',
-        title: this.name
+        title: this.name, 
+        content: this.contentInfoBulle
       });
 
       // choisir l'icon
@@ -54,40 +68,54 @@ var Station = {
       else {
         this.marker.icon = 'images/open.png';     
       }
-	}
+  }
 
 };
 
 
 var StationsObject =  {
 // charger stations -> faire un appel puis boucle pour creer chaque stations
-	init: function () {
+  init: function (map) {
     this.stationsArray = [];
     this.markers = [];
+    this.infoBulles = [];
 
 
-    this.stationsArray = this.getStations();
+    this.stationsArray = this.getStations(map);
     this.createMarkers(this.stationsArray);
   },
 
 
-  getStations: function () {
+  getStations: function (map) {
     var array = []; 
+    var infoBulle;
+    var markerCluster = new MarkerClusterer(map);
     $.ajax({
+
       url : 'https://opendata.paris.fr/api/records/1.0/search/?dataset=stations-velib-disponibilites-en-temps-reel&rows=1234',
       method : 'GET',
       async: false,
       success : function(data){
+
         for (var i = 0; i < data.records.length; i++) {
-          var station = data.records[i].fields;
-          stationNew = Object.create(Station);
-          stationNew.init(station.number, station.name, station.address, station.banking, station.bonus, station.status, station.position, station.bike_stands, station.available_bike_stands, station.available_bikes);
-          array.push(stationNew);
+
+            var station = data.records[i].fields;
+            stationNew = Object.create(Station);
+            stationNew.init(station.number, station.name, station.address, station.banking, station.bonus, station.status, station.position, station.bike_stands, station.available_bike_stands, station.available_bikes);
+            markerCluster.addMarker(stationNew.marker);
+            google.maps.event.addListener(stationNew.marker, 'click', function () {
+              if (!infoBulle) {
+                infoBulle = new google.maps.InfoWindow();
+              }
+              infoBulle.setContent(stationNew.contentInfoBulle);
+              infoBulle.open(map, stationNew.marker);
+            });
+            array.push(stationNew);
         }
-      }     
-    })
-    return array;
-  },
+      }
+  })
+  return array;    
+},
 
   createMarkers: function (stations) {
      for (var i = 0; i < stations.length; i++) {
@@ -95,7 +123,6 @@ var StationsObject =  {
       this.markers.push(station.marker);
     }
   }
+
+  
 };
-
-
-
