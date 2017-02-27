@@ -1,7 +1,7 @@
 // MAP
 
 var map;
-var infoBulle;
+var infoBulle = null;
 
 function initMap() {
   var map = new google.maps.Map(document.getElementById('map'), {
@@ -11,6 +11,10 @@ function initMap() {
   });
   var stations = Object.create(StationsObject);
   stations.init(map);
+
+   infoBulle = new google.maps.InfoWindow({
+                content: "loading..."
+            });
 
 
 }
@@ -52,7 +56,7 @@ var Station = {
         map: map,
         icon: '',
         title: this.name, 
-        content: this.contentInfoBulle
+        html: this.contentInfoBulle
       });
 
       // choisir l'icon
@@ -68,6 +72,10 @@ var Station = {
       else {
         this.marker.icon = 'images/open.png';     
       }
+      google.maps.event.addListener(this.marker, "click", function () {
+                infoBulle.setContent(this.html);
+                infoBulle.open(map, this);
+            });
   }
 
 };
@@ -88,7 +96,6 @@ var StationsObject =  {
 
   getStations: function (map) {
     var array = []; 
-    var infoBulle;
     var markerCluster = new MarkerClusterer(map);
     $.ajax({
 
@@ -103,13 +110,6 @@ var StationsObject =  {
             stationNew = Object.create(Station);
             stationNew.init(station.number, station.name, station.address, station.banking, station.bonus, station.status, station.position, station.bike_stands, station.available_bike_stands, station.available_bikes);
             markerCluster.addMarker(stationNew.marker);
-            google.maps.event.addListener(stationNew.marker, 'click', function () {
-              if (!infoBulle) {
-                infoBulle = new google.maps.InfoWindow();
-              }
-              infoBulle.setContent(stationNew.contentInfoBulle);
-              infoBulle.open(map, stationNew.marker);
-            });
             array.push(stationNew);
         }
       }
