@@ -56,7 +56,8 @@ var Station = {
         map: map,
         icon: '',
         title: this.name, 
-        html: this.contentInfoBulle
+        html: this.contentInfoBulle,
+        station: this
       });
 
       // choisir l'icon
@@ -72,13 +73,41 @@ var Station = {
       else {
         this.marker.icon = 'images/open.png';     
       }
-      google.maps.event.addListener(this.marker, "click", function () {
-                infoBulle.setContent(this.html);
-                infoBulle.open(map, this);
-            });
-  }
+      google.maps.event.addListener(this.marker, "click",  function() {
+        infoBulle.setContent(this.html);
+        infoBulle.open(map, this);
+        $('#name').text(this.station.name);
+        $('#address').text(this.station.address);
+        $('#velosDispo').text(this.station.availableBike);
+        $('#placesDispo').text(this.station.availableBikeStand);
+        $('#placesTotales').text(this.station.bikeStand);
+        if (this.station.banking == 'True') {
+          $('#paiement').text('Oui');
+        }
+        else {
+          $('#paiement').text('Non');
+        }
+        if (this.station.bonus == 'True') {
+          $('#bonus').text('Oui');
+        }
+        else {
+          $('#bonus').text('Non');
+        }
+      });
 
+  },
+
+
+  // ActualiserInfo: function(station) {
+  //   $('#name').text(station.name);
+  //   $('#adress').text(station.address);
+  //   console.log('test');
+  // }
 };
+
+
+
+
 
 
 var StationsObject =  {
@@ -96,7 +125,7 @@ var StationsObject =  {
 
   getStations: function (map) {
     var array = []; 
-    var markerCluster = new MarkerClusterer(map);
+    var markerCluster = new MarkerClusterer(map, this.markers, {imagePath: 'images/m'}) ;
     $.ajax({
 
       url : 'https://opendata.paris.fr/api/records/1.0/search/?dataset=stations-velib-disponibilites-en-temps-reel&rows=1234',
@@ -126,3 +155,13 @@ var StationsObject =  {
 
   
 };
+
+// CANVAS
+
+
+var canvas  = document.querySelector('#canvas');
+var context = canvas.getContext('2d');
+
+context.lineWidth = "5";
+context.strokeStyle = "gold";
+context.strokeRect(50, 35, 50, 80);
