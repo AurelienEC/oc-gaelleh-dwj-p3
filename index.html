@@ -8,7 +8,10 @@
       #info {height: 100%; display: inline-block; width: 20%; background: white; float: right; min-width: 300px;}
       #info div {padding: 0 20px;}
       #info h1 {padding: 20px; background: #184B5D; margin-top: 0; color: white;}
+      .wrapper {position: relative; width: 400px; height: 200px;  -moz-userselect: none;  -webkit-user-select: none;  -ms-user-select: none;  user-select: none;  padding-top: 15px;}
+      .signature-pad {  position: absolute;  left: 0;  top: 0;  width:400px;  height:200px;  border: 2px solid black;}
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/1.5.3/signature_pad.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"
   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
   crossorigin="anonymous"></script>
@@ -23,9 +26,13 @@
       <div>Nombre de places totales : <span id="placesTotales"></span></div>
       <div>Borne de paiement : <span id="paiement"></span></div>
       <div>Bonus : <span id="bonus"></span></div>
-      <canvas id="canvas" width="150" height="150">
-      <p>Désolé, votre navigateur ne supporte pas Canvas. Mettez-vous à jour</p>
-    </canvas>
+      <div class="wrapper">
+        <canvas id="signature-pad" class="signature-pad"></canvas>
+      </div>
+      <div>
+        <button id="reserver">Réserver</button>
+        <button id="effacer">Effacer</button>
+      </div>
     </div>
     <script type="text/javascript" src="markerclusterer.js"></script>
     <script type="text/javascript" src="main.js"></script>

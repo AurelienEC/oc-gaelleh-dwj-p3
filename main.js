@@ -158,10 +158,20 @@ var StationsObject =  {
 
 // CANVAS
 
+var signaturePad = new SignaturePad(document.getElementById('signature-pad'), {
+  backgroundColor: 'rgba(255, 255, 255, 0)',
+  penColor: 'rgb(0, 0, 0)'
+});
+var saveButton = document.getElementById('save');
+var cancelButton = document.getElementById('clear');
 
-var canvas  = document.querySelector('#canvas');
-var context = canvas.getContext('2d');
+saveButton.addEventListener('click', function (event) {
+  var data = signaturePad.toDataURL('image/png');
 
-context.lineWidth = "5";
-context.strokeStyle = "gold";
-context.strokeRect(50, 35, 50, 80);
+// Send data to server instead...
+  window.open(data);
+});
+
+cancelButton.addEventListener('click', function (event) {
+  signaturePad.clear();
+});
