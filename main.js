@@ -157,13 +157,17 @@ var StationsObject =  {
 };
 
 // CANVAS
+$( "#reserver-button" ).click(function() {
+  $( "#div-reservation" ).toggle();
+  $( "#reserver-button" ).text('Annuler');
+});
 
 var signaturePad = new SignaturePad(document.getElementById('signature-pad'), {
   backgroundColor: 'rgba(255, 255, 255, 0)',
   penColor: 'rgb(0, 0, 0)'
 });
-var saveButton = document.getElementById('save');
-var cancelButton = document.getElementById('clear');
+var saveButton = document.getElementById('reserver');
+var cancelButton = document.getElementById('effacer');
 
 saveButton.addEventListener('click', function (event) {
   var data = signaturePad.toDataURL('image/png');
