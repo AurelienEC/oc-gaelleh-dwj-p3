@@ -56,7 +56,8 @@ var Station = {
         map: map,
         icon: '',
         title: this.name, 
-        html: this.contentInfoBulle
+        html: this.contentInfoBulle,
+        station: this
       });
 
       // choisir l'icon
@@ -72,13 +73,41 @@ var Station = {
       else {
         this.marker.icon = 'images/open.png';     
       }
-      google.maps.event.addListener(this.marker, "click", function () {
-                infoBulle.setContent(this.html);
-                infoBulle.open(map, this);
-            });
-  }
+      google.maps.event.addListener(this.marker, "click",  function() {
+        infoBulle.setContent(this.html);
+        infoBulle.open(map, this);
+        $('#name').text(this.station.name);
+        $('#address').text(this.station.address);
+        $('#velosDispo').text(this.station.availableBike);
+        $('#placesDispo').text(this.station.availableBikeStand);
+        $('#placesTotales').text(this.station.bikeStand);
+        if (this.station.banking == 'True') {
+          $('#paiement').text('Oui');
+        }
+        else {
+          $('#paiement').text('Non');
+        }
+        if (this.station.bonus == 'True') {
+          $('#bonus').text('Oui');
+        }
+        else {
+          $('#bonus').text('Non');
+        }
+      });
 
+  },
+
+
+  // ActualiserInfo: function(station) {
+  //   $('#name').text(station.name);
+  //   $('#adress').text(station.address);
+  //   console.log('test');
+  // }
 };
+
+
+
+
 
 
 var StationsObject =  {
@@ -96,7 +125,7 @@ var StationsObject =  {
 
   getStations: function (map) {
     var array = []; 
-    var markerCluster = new MarkerClusterer(map);
+    var markerCluster = new MarkerClusterer(map, this.markers, {imagePath: 'images/m'}) ;
     $.ajax({
 
       url : 'https://opendata.paris.fr/api/records/1.0/search/?dataset=stations-velib-disponibilites-en-temps-reel&rows=1234',
@@ -126,3 +155,23 @@ var StationsObject =  {
 
   
 };
+
+// CANVAS
+
+var signaturePad = new SignaturePad(document.getElementById('signature-pad'), {
+  backgroundColor: 'rgba(255, 255, 255, 0)',
+  penColor: 'rgb(0, 0, 0)'
+});
+var saveButton = document.getElementById('save');
+var cancelButton = document.getElementById('clear');
+
+saveButton.addEventListener('click', function (event) {
+  var data = signaturePad.toDataURL('image/png');
+
+// Send data to server instead...
+  window.open(data);
+});
+
+cancelButton.addEventListener('click', function (event) {
+  signaturePad.clear();
+});
