@@ -3,13 +3,68 @@
   <head>
     <style type="text/css">
       * {font-family: Arial;}
+      body { width: 100%; }
       html, body { height: 100%; margin: 0; padding: 0; }
-      #map { height: 100%; display: inline-block; width: 80%; max-width: calc( 100% - 300px);}
-      #info {height: 100%; display: inline-block; width: 20%; background: white; float: right; min-width: 300px;}
-      #info div {padding: 0 20px;}
-      #info h1 {padding: 20px; background: #184B5D; margin-top: 0; color: white;}
-      .wrapper {position: relative; width: 400px; height: 200px;  -moz-userselect: none;  -webkit-user-select: none;  -ms-user-select: none;  user-select: none;  padding-top: 15px;}
-      .signature-pad {  position: absolute;  left: 0;  top: 0;  width:400px;  height:200px;  border: 2px solid black;}
+      #map { height: calc( 100% - 230px); display: inline-block; width: calc( 80% - 1px); max-width: calc( 100% - 301px);}
+      .info {height:  calc( 100% - 230px); display: inline-block; width: 20%; background: white; float: right; min-width: 300px; border-left: 1px solid #184B5D;}
+      .info div {padding: 0 20px; }
+      .info h1 {padding: 20px; background: #184B5D; margin-top: 0; color: white;}
+      .wrapper {position: relative; width: 200px; height: 150px;  -moz-userselect: none;  -webkit-user-select: none;  -ms-user-select: none;  user-select: none;  padding-top: 15px; border: 2px solid black; overflow: hidden;}
+      #reservationEnCours {    position: absolute;
+    bottom: 0;
+    z-index: 10;
+    background: #184B5D;
+    color: white;
+    width: 100%;
+    padding-top: 10px;
+    height: 30px;
+    text-align: center;}
+      .signature-pad {  position: absolute;  left: 0;  top: 0;   }
+      #div-signature {display: none;}
+      #station-infos {display: none;}
+      #guide-station { margin: 20px auto; display: block;}
+      #slider *{
+  margin:0;
+  padding:0;
+}
+#slider{
+  width:2000px;  overflow-x:hidden;
+  position:relative;
+  margin:auto;
+  padding:0;
+}
+#slider ul{
+  list-style-type:none;
+}
+#slider ul li{
+  width: 400px;
+  display:block;
+  float:left;
+}
+#slider ul li img{
+  width: 400px;
+}
+
+ .btn{
+   position:absolute;
+  display:block;
+  background-color:#333;
+  color:#fff;
+  font-weight:bold;
+  top:55px;
+  cursor:pointer;
+
+}
+.precedent {
+  left: 10px;
+}
+  .suivant{
+  right: 10px;
+}
+@media (max-width: 750px) {
+  #map { width: 100%; max-width: 100%;}
+  .info { width: 100%; height: auto;}
+}
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/1.5.3/signature_pad.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"
@@ -17,23 +72,42 @@
   crossorigin="anonymous"></script>
   </head>
   <body>
-    <div id="map"></div>
-    <div id="info">
-      <h1 id="name">test</h1>
-      <div id="address"></div>
-      <div>Vélos disponibles : <span id="velosDispo"></span></div>
-      <div>Places disponibles : <span id="placesDispo"></span></div>
-      <div>Nombre de places totales : <span id="placesTotales"></span></div>
-      <div>Borne de paiement : <span id="paiement"></span></div>
-      <div>Bonus : <span id="bonus"></span></div>
-      <div class="wrapper">
-        <canvas id="signature-pad" class="signature-pad"></canvas>
-      </div>
-      <div>
-        <button id="reserver">Réserver</button>
-        <button id="effacer">Effacer</button>
-      </div>
+    <div id="slider">
+      <ul></ul>
     </div>
+    <strong class="btn precedent"> < </strong>
+    <strong class="btn suivant"> > </strong>
+    <div id="reservationEnCours"></div>
+    <div id="map"></div>
+    <div class="info">
+      <h1 id="name">Vélos de Paris</h1>
+      <div id="station-infos">
+        <div id="address"></div>
+        <div>Statut : <span id="statut"></span></div>
+        <div>Vélos disponibles : <span id="velosDispo"></span></div>
+        <div>Places disponibles : <span id="placesDispo"></span></div>
+        <div>Nombre de places totales : <span id="placesTotales"></span></div>
+        <div>Borne de paiement : <span id="paiement"></span></div>
+        <div>Bonus : <span id="bonus"></span></div>
+        <div id="div-reservation">
+          <button id="bouton-reservation">Cliquer ici pour réserver un vélo</button>
+          <div id="div-signature">
+
+            <p>Attention, une nouvelle réservation supprime automatiquement l'ancienne.</p>
+            <div class="wrapper">
+              <canvas id="signature-pad" class="signature-pad"></canvas>
+            </div>
+            <div>
+              <button id="reserver">Réserver</button>
+              <button id="effacer">Effacer</button>
+            </div>
+            <p>NB: Une réservation est effective pendant 20 minutes.</p>
+          </div>
+        </div>
+      </div>
+      <img id="guide-station" src="images/guide-station.png">
+    </div>
+    
     <script type="text/javascript" src="markerclusterer.js"></script>
     <script type="text/javascript" src="main.js"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5kVC1zjgcrkm84GQVeZETya6O9CnVAzU&callback=initMap"></script>

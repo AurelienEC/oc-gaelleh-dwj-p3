@@ -1,3 +1,4 @@
+
 // MAP
 
 var map;
@@ -6,7 +7,7 @@ var infoBulle = null;
 function initMap() {
   var map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: 48.856578, lng: 2.351828},
-    zoom: 12,
+    zoom: 11,
 
   });
   var stations = Object.create(StationsObject);
@@ -34,21 +35,8 @@ var Station = {
       this.bikeStand =  bikeStand;
       this.availableBikeStand = availableBikeStand;
       this.availableBike = availableBike;
-      this.contentInfoBulle = '<div id="'+this.number+'" class="infobulle '+this.status+'">'+
-      '<h1>'+this.name+'</h1>'+
-      '<div>'+this.address+'</div>'+
-      '<div>V&eacute;los disponibles : '+this.availableBike+'</div>'+
-      '<div>Places disponibles : '+this.availableBikeStand+'</div>'+
-      '<div>Nombre de places totales : '+this.bikeStand+'</div>';
-      if (this.banking == 'True') {
-        this.contentInfoBulle += '<div>Borne de paiement : Oui</div>';
-      }
-      else {
-        this.contentInfoBulle += '<div>Borne de paiement : Non</div>';
-      }
-      if (this.bonus == 'True') {
-        this.contentInfoBulle += '<div>Bonus : Oui</div>';
-      }
+      this.contentInfoBulle = 
+      '<h2>'+this.name+'</h2>';
 
       // créer le marker
       this.marker = new google.maps.Marker({
@@ -74,8 +62,16 @@ var Station = {
         this.marker.icon = 'images/open.png';     
       }
       google.maps.event.addListener(this.marker, "click",  function() {
+        $('#station-infos').css('display', 'block');
         infoBulle.setContent(this.html);
         infoBulle.open(map, this);
+        $('.info').attr('id', this.station.number);
+        if (this.status == 'CLOSED') {
+           $('#statut').text('station fermée');
+        }
+        else {
+           $('#statut').text('station ouverte');
+        }
         $('#name').text(this.station.name);
         $('#address').text(this.station.address);
         $('#velosDispo').text(this.station.availableBike);
@@ -93,16 +89,17 @@ var Station = {
         else {
           $('#bonus').text('Non');
         }
+        if (this.station.availableBike == 0) {
+          $('#bouton-reservation').css('display', 'none');
+        }
+        else {
+          $('#bouton-reservation').css('display', 'block');
+          $('#div-signature').css('display', 'none');
+          $('#bouton-reservation').text('Cliquer ici pour réserver un vélo');
+        }
       });
 
   },
-
-
-  // ActualiserInfo: function(station) {
-  //   $('#name').text(station.name);
-  //   $('#adress').text(station.address);
-  //   console.log('test');
-  // }
 };
 
 
@@ -162,16 +159,105 @@ var signaturePad = new SignaturePad(document.getElementById('signature-pad'), {
   backgroundColor: 'rgba(255, 255, 255, 0)',
   penColor: 'rgb(0, 0, 0)'
 });
-var saveButton = document.getElementById('save');
-var cancelButton = document.getElementById('clear');
+var boutonReserver = document.getElementById('reserver');
+var boutonEffacer= document.getElementById('effacer');
 
-saveButton.addEventListener('click', function (event) {
-  var data = signaturePad.toDataURL('image/png');
-
-// Send data to server instead...
-  window.open(data);
+boutonReserver.addEventListener('click', function (event) {
+  var stationNumber = $('.info').attr('id');
+  var nomStation = $('#name').text();
+  if (sessionStorage.length == 0) {
+    stockageReservation(stationNumber, nomStation);
+  }
+  else {
+     stockageReservation(stationNumber, nomStation);
+     alert('Votre nouvelle réservation a remplacé l\'ancienne');
+  }
 });
 
-cancelButton.addEventListener('click', function (event) {
+boutonEffacer.addEventListener('click', function (event) {
   signaturePad.clear();
+});
+
+
+// RESERVATION
+
+$('#bouton-reservation').click(function() {
+  $('#div-signature').toggle();
+  if ($('#div-signature').css('display') == 'none') {
+    $('#bouton-reservation').text('Cliquer ici pour réserver un vélo');
+  }
+  else {
+    $('#bouton-reservation').text('Annuler');
+    $('#guide-station').css('display', 'none');
+  }
+});
+
+
+// STORAGE
+
+function stockageReservation (stationNumber, nomStation) {
+  sessionStorage.setItem('idStation', stationNumber);
+  sessionStorage.setItem('datetimeReservation', new Date().getTime())
+  sessionStorage.setItem('nomStation', nomStation)
+  console.log(sessionStorage.getItem('datetimeReservation'));
+}
+var tempsPasse = new Date().getTime() - sessionStorage.getItem('datetimeReservation');
+if (tempsPasse > 20 * 60 * 1000) {
+   sessionStorage.clear();
+}
+if (sessionStorage.length == 0) {
+  $('#reservationEnCours').text('Aucune réservation en cours');
+}
+else {
+  var tempsRestant = 20 * 60 * 1000 - tempsPasse;
+  var minutes = Math.floor(tempsRestant/60000);
+  var secondes = Math.floor((tempsRestant - minutes * 60 * 1000)/1000);
+    //console.log(tempsRestant.getSeconds());
+  $('#reservationEnCours').text('Vous avez un vélo de réservé à la station ' + sessionStorage.getItem('nomStation') + ' pour ' + minutes + 'min et ' + secondes + 's');
+}
+
+
+// SLIDER
+
+for (var i = 1; i <= 5; i++) {
+  $('#slider ul').append('<li class="li' + i + '" ><img src="images/slide' + i + '.png"></li>' );
+}
+
+$(function(){
+  function next(){
+    if(parseInt($("#slider ").css("margin-left"))>-(2000-$(window).width())){ 
+      $("#slider").animate({marginLeft: "-="+250+"px"}, 500);
+    } 
+    else {
+      $("#slider ").animate({marginLeft: "0px"}, 500);
+    }
+  }
+
+  
+  function back(){
+    if(parseInt($("#slider ").css("margin-left"))<0){
+      $("#slider ").animate({marginLeft: "+="+250+"px"}, 500 );
+    } 
+    else {
+      $("#slider ").animate({marginLeft: "0"}, 500);
+    }
+  }
+  
+  $(".suivant").click(function(){
+    next();
+  });
+  
+  $(".precedent").click(function(){
+    back();
+  });
+
+  document.addEventListener("keydown", function(e){
+    if(e.keyCode === 37){
+    back();
+    }
+    else if(e.keyCode === 39){
+    next();
+    }
+  });
+  
 });
