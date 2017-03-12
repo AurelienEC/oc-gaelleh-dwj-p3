@@ -176,8 +176,10 @@ var Reservation = {
   checkReservation: function() {
     if (sessionStorage.length == 0) {
       $('#reservationEnCours').text('Aucune réservation en cours');
+      $('#reservationEnCours2').text('Pas de vélo réservé');
     }
     else {
+      $('#reservationEnCours2').text('1 vélo réservé');
       setInterval(this.affichageReservation, 1000);
 
     }
@@ -209,13 +211,13 @@ var Reservation = {
           sessionStorage.setItem('idStation', stationNumber);
           sessionStorage.setItem('datetimeReservation', new Date().getTime());
           sessionStorage.setItem('nomStation', nomStation);
-          this.affichageReservation();
+          window.location.reload();
         }
         else {
           sessionStorage.setItem('idStation', stationNumber);
           sessionStorage.setItem('datetimeReservation', new Date().getTime());
           sessionStorage.setItem('nomStation', nomStation);
-          this.affichageReservation();
+          window.location.reload();
           alert('Votre nouvelle réservation a remplacé l\'ancienne');
         }
 
@@ -273,10 +275,21 @@ function prev() {
   slider.src = images[num];
 }
 
+
+
 $('#btnNext').click(function() {
   next();
 });
 
 $('#btnPrev').click(function() {
   prev();
+});
+
+document.addEventListener("keydown", function(e){
+  if(e.keyCode === 37){
+    prev();
+  }
+  else if(e.keyCode === 39){
+    next();
+  }
 });

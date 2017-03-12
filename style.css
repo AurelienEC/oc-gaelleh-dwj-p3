@@ -13,7 +13,8 @@ html, body {
 	width: calc( 80% - 1px); 
 	max-width: calc( 100% - 301px);
 }
-.info {height:  calc( 100% - 296px); 
+.info {
+	height:  calc( 100% - 296px); 
 	display: inline-block; 
 	width: 20%; 
 	background: white; 
@@ -119,6 +120,11 @@ button {
 }
 #station-infos div {
 	padding: 5px;
+}
+#reservationEnCours2 {
+	text-align: center;
+	background: #add;
+	padding: 15px;
 }
 button#reserver {
 	margin-left: 54px;
