@@ -1,0 +1,131 @@
+* {
+	font-family: Arial;
+}
+body {
+	width: 100%; overflow-x: hidden;
+}
+html, body { 
+	height: 100%; margin: 0; padding: 0; 
+}
+#map { 
+	height: calc( 100% - 296px); 
+	display: inline-block; 
+	width: calc( 80% - 1px); 
+	max-width: calc( 100% - 301px);
+}
+.info {height:  calc( 100% - 296px); 
+	display: inline-block; 
+	width: 20%; 
+	background: white; 
+	float: right; 
+	min-width: 300px; 
+	border-left: 1px solid #184B5D; 
+	overflow: scroll;
+} 
+.info div {
+	padding: 0 20px; 
+}
+#address {
+	text-transform: lowercase; 
+} 
+.info h1 {
+	padding: 20px; 
+	background: #184B5D; 
+	margin-top: 0; 
+	color: white;
+}
+.wrapper {
+	margin: auto; 
+	position: relative; 
+	width: 200px; 
+	height: 80px;  
+	-moz-userselect: none;  
+	-webkit-user-select: none;  
+	-ms-user-select: none;  
+	user-select: none;  
+	padding-top: 15px; 
+	border: 2px solid black;
+	overflow: hidden;
+}
+#reservationEnCours { 
+	background: #184B5D;
+	color: white;
+	width: 100%;
+	padding-top: 10px;
+	height: 30px;
+	text-align: center;
+	border-bottom: 1px solid white;
+}
+.signature-pad {
+	position: absolute;  
+	left: 0;  
+	top: 0;   
+}
+#div-signature, #station-infos  {
+	display: none;
+}
+#guide-station { 
+	margin: 20px auto; 
+	display: block;
+}
+#station-infos {
+	color: #184B5D;
+	font-size: 12px;
+}
+button {
+	background: #184B5D;
+	color: white;
+	border: none;
+	padding: 8px;
+	font-size: 12px;
+	margin: auto;
+}
+#station-infos span{
+	color: black;
+}
+.slider{
+	max-width: 100%;
+	background-color: #184B5D;
+	margin: 0 auto;
+	position: relative;
+	border-bottom: 1px solid white;
+}
+.slider img {
+	width: 500px;
+	max-width: 100%;
+	height: auto;
+}
+.monSlider {
+	display: block;
+	margin: 0 auto;
+}
+.btn {
+	width: 85px;
+	padding: .5em 0;
+	text-align: center;
+	background-color: rgba(0, 0, 0, 0.5);
+	color: #fff;
+	cursor: pointer;
+}
+#btnPrev {
+	position: absolute;
+	top: 45%;
+	left: 0;
+}
+#btnNext {
+	position: absolute;
+	top: 45%;
+	right: 0;
+}
+#station-infos div {
+	padding: 5px;
+}
+button#reserver {
+	margin-left: 54px;
+}
+@media (max-width: 750px) {
+	#map { width: 100%; max-width: 100%;}
+	.info { width: 100%; height: auto;}
+	.info h1 {padding-top: 61px;}
+	#reservationEnCours {position: absolute;}
+}
