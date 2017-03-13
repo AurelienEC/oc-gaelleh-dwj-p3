@@ -197,6 +197,7 @@ var Reservation = {
   },
 
   reservationForm: function() {
+    var self = this;
     var signaturePad = new SignaturePad(document.getElementById('signature-pad'), {
       backgroundColor: 'rgba(255, 255, 255, 0)',
       penColor: 'rgb(0, 0, 0)'
@@ -211,13 +212,15 @@ var Reservation = {
           sessionStorage.setItem('idStation', stationNumber);
           sessionStorage.setItem('datetimeReservation', new Date().getTime());
           sessionStorage.setItem('nomStation', nomStation);
-          window.location.reload();
+          $('#reservationEnCours2').text('1 vélo réservé');
+          self.affichageReservation();
         }
         else {
           sessionStorage.setItem('idStation', stationNumber);
           sessionStorage.setItem('datetimeReservation', new Date().getTime());
           sessionStorage.setItem('nomStation', nomStation);
-          window.location.reload();
+          self.affichageReservation();
+          $('#reservationEnCours2').text('1 vélo réservé');
           alert('Votre nouvelle réservation a remplacé l\'ancienne');
         }
 
