@@ -5,12 +5,38 @@ var map;
 var infoBulle = null;
 
 function initMap() {
-  var map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: 48.856578, lng: 2.351828},
-    zoom: 11,
-  });
+  if (sessionStorage.getItem('idStation'))  {
+    var map = new google.maps.Map(document.getElementById('map'), {
+      center: {lat: 48.856578, lng: 2.351828},
+      zoom: 20,
+    });
+  }
+  else {
+    var map = new google.maps.Map(document.getElementById('map'), {
+      center: {lat: 48.856578, lng: 2.351828},
+      zoom: 11,
+    });
+}
   var stations = Object.create(StationsObject);
-  stations.init(map);
+  console.log(stations);
+    stations.init(map);
+if (sessionStorage.getItem('idStation'))  {
+  var searchTerm = "stevie",
+    index = -1;
+  for(var i = 0, len = stations.stationsArray.length; i < len; i++) {
+    if (stations.stationsArray[i].number == sessionStorage.getItem('idStation')) {
+        index = i;
+        break;
+    }
+    }
+     map.setCenter(new google.maps.LatLng(
+       stations.stationsArray[index].position[0],
+       stations.stationsArray[index].position[1]
+        ));
+    stations.stationsArray[index].marker.icon = "images/other.png";
+
+  
+}
 
   infoBulle = new google.maps.InfoWindow({
     content: "loading..."
@@ -29,7 +55,6 @@ var Station = {
     this.bikeStand =  bikeStand;
     this.availableBikeStand = availableBikeStand;
     this.availableBike = availableBike;
-    this.reserve = false;
     this.contentInfoBulle = 
     '<h2>'+this.name+'</h2>';
 
@@ -162,13 +187,14 @@ var Reservation = {
     this.nomStation = sessionStorage.getItem('nomStation');
     this.datetimeReservation = sessionStorage.getItem('datetimeReservation');
     this.tempsPasse = new Date().getTime() -  this.datetimeReservation;
+    this.interval;
     this.reservationForm();
     this.checkTime();
     this.checkReservation();
   },
 
   checkTime: function() {
-    if (this.tempsPasse > 20 * 60 * 1000) {
+    if (this.tempsPasse >= 20 * 60 * 1000) {
      sessionStorage.clear();
     }
   },
@@ -179,9 +205,7 @@ var Reservation = {
       $('#reservationEnCours2').text('Pas de vélo réservé');
     }
     else {
-      $('#reservationEnCours2').text('1 vélo réservé');
-      setInterval(this.affichageReservation, 1000);
-
+       this.interval = setInterval(this.affichageReservation, 1000); 
     }
   },
 
@@ -191,9 +215,17 @@ var Reservation = {
     var tempsRestant = 20 * 60 * 1000 - tempsPasse;
     var minutes = Math.floor(tempsRestant/60000);
     var secondes = Math.floor((tempsRestant - minutes * 60 * 1000)/1000);
-    $('#reservationEnCours').text('Vélo réservé station ' + sessionStorage.getItem('nomStation') + ' pour ' + minutes + 'min et ' + secondes + 's');
 
-
+    if (minutes < 0 || minutes == 0 && secondes <= 0) {
+      $('#reservationEnCours').text('Aucune réservation en cours');
+      $('#reservationEnCours2').text('Pas de vélo réservé');
+      clearInterval(this.interval);
+      sessionStorage.clear();
+    }
+    else {
+      $('#reservationEnCours').text('Vélo réservé station ' + sessionStorage.getItem('nomStation') + ' pour ' + minutes + 'min et ' + secondes + 's');
+      $('#reservationEnCours2').text('1 vélo réservé');
+    }
   },
 
   reservationForm: function() {
@@ -213,13 +245,13 @@ var Reservation = {
           sessionStorage.setItem('datetimeReservation', new Date().getTime());
           sessionStorage.setItem('nomStation', nomStation);
           $('#reservationEnCours2').text('1 vélo réservé');
-          self.affichageReservation();
+          this.interval = setInterval(self.affichageReservation, 1000); 
         }
         else {
           sessionStorage.setItem('idStation', stationNumber);
           sessionStorage.setItem('datetimeReservation', new Date().getTime());
           sessionStorage.setItem('nomStation', nomStation);
-          self.affichageReservation();
+          this.interval = setInterval(this.affichageReservation, 1000); 
           $('#reservationEnCours2').text('1 vélo réservé');
           alert('Votre nouvelle réservation a remplacé l\'ancienne');
         }

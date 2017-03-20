@@ -40,10 +40,10 @@ html, body {
 	position: relative; 
 	width: 200px; 
 	height: 80px;  
-	-moz-userselect: none;  
+/*	-moz-userselect: none;  
 	-webkit-user-select: none;  
 	-ms-user-select: none;  
-	user-select: none;  
+	user-select: none;  */
 	padding-top: 15px; 
 	border: 2px solid black;
 	overflow: hidden;
