@@ -53,9 +53,9 @@ html, body {
 	color: white;
 	width: 100%;
 	padding-top: 10px;
-	height: 30px;
+	min-height: 30px;
 	text-align: center;
-	border-bottom: 1px solid white;
+    border-bottom: 1px solid white;
 }
 .signature-pad {
 	position: absolute;  
@@ -110,13 +110,36 @@ button {
 }
 #btnPrev {
 	position: absolute;
-	top: 45%;
+    top: 0;
+    bottom: 0;
 	left: 0;
+	background: transparent;
+	width: 100px;
 }
 #btnNext {
 	position: absolute;
-	top: 45%;
-	right: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: transparent;
+    width: 100px;
+}
+#btnPrev span{
+	margin-top: 100px;
+	background: rgba(0,0,0,0.5);
+	width: 15px;
+	padding: 8px;
+	text-align: center;
+	display: block;
+}
+#btnNext span{
+	margin-top: 100px;
+	margin-left: 69px;
+    background: rgba(0,0,0,0.5);
+    width: 15px;
+	padding: 8px;
+    text-align: center;
+	display: block;
 }
 #station-infos div {
 	padding: 5px;
